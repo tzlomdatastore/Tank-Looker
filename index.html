@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  
+  <title>ဆီကန် ပမာဏ - V1.5</title>
+  <style>
+    * { box-sizing: border-box; font-family: sans-serif; }
+    body { background-color: #e2e8f0; padding: 12px; margin: 0; color: #1e293b; user-select: none; }
+    
+    .container { 
+      max-width: 450px; 
+      margin: 0 auto; 
+      background: #ffffff; 
+      border-radius: 24px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+      padding: 16px;
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .app-workspace { flex: 1; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .title { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: 0.5px; }
+    
+    .date-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 10px; text-align: right; }
+    .date-box strong { font-size: 11px; color: #334155; font-family: monospace; }
+    
+    .chart-container { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 6px; border-radius: 16px; margin-bottom: 14px; }
+    .chart-box { display: flex; justify-content: space-around; align-items: flex-end; height: 130px; padding-bottom: 4px; border-bottom: 2px solid #cbd5e1; }
+    .bar-group { display: flex; flex-direction: column; align-items: center; width: 11%; height: 100%; justify-content: flex-end; position: relative; }
+    
+    .bar-stack { width: 100%; display: flex; flex-direction: column-reverse; border-radius: 20px; overflow: hidden; height: 100%; justify-content: flex-start; background: #cbd5e1; }
+    .bar-current { background-color: #10b981; width: 100%; transition: height 0.2s ease; position: relative; border-radius: 0 0 20px 20px; }
+    .bar-space { background-color: #94a3b8; width: 100%; transition: height 0.2s ease; position: relative; border-radius: 20px 20px 0 0; }
+    
+    .bar-label-num { position: absolute; left: 50%; transform: translateX(-50%); font-size: 8px; font-weight: bold; color: white; z-index: 5; pointer-events: none; }
+    .chart-label-x { font-size: 11px; font-weight: bold; color: #334155; margin-top: 4px; text-align: center; }
+    
+    .chart-legends { display: flex; justify-content: center; gap: 14px; margin-bottom: 8px; font-size: 11px; font-weight: 600; }
+    .legend-item { display: flex; align-items: center; gap: 4px; color: #475569; }
+    .legend-color { width: 10px; height: 10px; border-radius: 3px; }
+
+    .table-wrapper { border: 1px solid #cbd5e1; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; }
+    
+    th { 
+      background: linear-gradient(135deg, #64748b, #475569); 
+      border-bottom: 1px solid #cbd5e1; 
+      padding: 8px 2px; 
+      font-size: 11px; 
+      font-weight: bold; 
+      color: #ffffff; 
+    }
+    th span { font-size: 9px; font-weight: normal; color: #e2e8f0; }
+    td { padding: 2px; border-bottom: 1px solid #e2e8f0; font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    
+    .bg-name { font-weight: bold; color: #0f172a; border-right: 1px solid #cbd5e1; background: #f1f5f9; }
+    .bg-space { background: #f8fafc; color: #475569; border-right: 1px solid #cbd5e1; font-weight: bold; }
+    
+    .table-input { width: 100%; border: none; background: transparent; text-align: center; font-size: 13px; font-weight: 700; padding: 6px 2px; border-radius: 6px; color: #0f172a; }
+    .table-input:focus { background: #e2e8f0; outline: none; }
+    .td-current { border-right: 1px solid #cbd5e1; background-color: #f8fafc; }
+    
+    .keyboard-space {
+      height: 40vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 10px;
+    }
+    .footer-brand {
+      font-size: 24px;
+      font-weight: 900;
+      color: #94a3b8;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.6;
+      font-family: 'Arial Black', sans-serif;
+      text-shadow: 1px 1px 0px #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="app-workspace">
+      
+      <div class="header">
+        <h1 class="title">ဆီကန် ပမာဏ</h1>
+        <div class="date-box">
+          <strong id="currentDateTime">--/--/---- , --:-- --</strong>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-legends">
+          <div class="legend-item"><div class="legend-color" style="background: #94a3b8;"></div> နေရာလွတ်</div>
+          <div class="legend-item"><div class="legend-color" style="background: #10b981;"></div> လက်ရှိဆီ</div>
+        </div>
+        <div class="chart-box" id="chartBox"></div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="border-right: 1px solid #cbd5e1; width: 75px;"><br><span>ဂါလံ</span></th>
+              <th style="border-right: 1px solid #cbd5e1;">လက်ရှိဆီ<br><span>ဂါလံ</span></th>
+              <th style="border-right: 1px solid #cbd5e1;">နေရာလွတ်<br><span>ဂါလံ</span></th>
+              <th>အပြင်<br><span>ပေပါ</span></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="keyboard-space">
+      <div class="footer-brand">TZLOM & Gemini</div>
+    </div>
+  </div>
+
+  <script>
+    // Service Worker မှတ်ပုံတင်ခြင်း (App အဖြစ် အလုပ်လုပ်ရန် အဓိကချက်)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker Registered'));
+    }
+
+    const tanks = [
+      { id: 1, name: '95', capacity: 900, current: 400, space: 500, outInch: 0 },
+      { id: 2, name: '92', capacity: 900, current: 230, space: 670, outInch: 0 },
+      { id: 3, name: '92', capacity: 900, current: 440, space: 460, outInch: 0 },
+      { id: 4, name: 'PD', capacity: 3300, current: 3300, space: 0, outInch: 26 },
+      { id: 5, name: 'D', capacity: 1650, current: 1450, space: 200, outInch: 48 }
+    ];
+
+    window.onload = function() {
+      updateDateTime();
+      setInterval(updateDateTime, 60000); 
+      buildApp();
+    };
+
+    function updateDateTime() {
+      const now = new Date();
+      const day = now.getDate();
+      const month = now.getMonth() + 1;
+      const year = now.getFullYear();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      const ampm = hours >= 12 ? 'pm' : 'am';
+      hours = hours % 12 || 12; 
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      document.getElementById("currentDateTime").innerText = `${day}-${month}-${year}  ,  ${hours}:${minutes} ${ampm}`;
+    }
+
+    function buildApp() {
+      const tbody = document.getElementById("tableBody");
+      const chartBox = document.getElementById("chartBox");
+      tbody.innerHTML = ""; chartBox.innerHTML = "";
+
+      tanks.forEach((tank, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="bg-name">${tank.name}</td>
+          <td class="td-current">
+            <input type="number" id="cur-${index}" value="${tank.current}" class="table-input" style="font-weight:800;" inputmode="numeric">
+          </td>
+          <td class="bg-space" id="spc-${index}">${tank.space}</td>
+          <td>
+            <input type="number" id="out-${index}" value="${tank.outInch}" class="table-input" style="color:#475569;" inputmode="numeric">
+          </td>
+        `;
+        tbody.appendChild(row);
+
+        const barGroup = document.createElement("div");
+        barGroup.className = "bar-group";
+        barGroup.innerHTML = `
+          <div class="bar-stack">
+            <div class="bar-current" id="b-cur-${index}"></div>
+            <div class="bar-space" id="b-spc-${index}"></div>
+          </div>
+          <div class="chart-label-x">${tank.name}</div>
+        `;
+        chartBox.appendChild(barGroup);
+
+        document.getElementById(`cur-${index}`).addEventListener('input', function() {
+          const inputVal = Number(this.value) || 0;
+          tanks[index].current = inputVal;
+          let remSpace = tanks[index].capacity - inputVal;
+          tanks[index].space = remSpace < 0 ? 0 : remSpace;
+          document.getElementById(`spc-${index}`).innerText = tanks[index].space;
+          updateBars(index);
+        });
+
+        document.getElementById(`out-${index}`).addEventListener('input', function() {
+          tanks[index].outInch = Number(this.value) || 0;
+        });
+      });
+
+      for (let i = 0; i < tanks.length; i++) updateBars(i);
+    }
+
+    function updateBars(index) {
+      const tank = tanks[index];
+      const curPct = (tank.current / tank.capacity) * 100;
+      const spcPct = (tank.space / tank.capacity) * 100;
+      const elCur = document.getElementById(`b-cur-${index}`);
+      const elSpc = document.getElementById(`b-spc-${index}`);
+
+      if (elCur && elSpc) {
+        elCur.style.height = curPct + "%";
+        elSpc.style.height = spcPct + "%";
+        elCur.innerHTML = tank.current > 0 ? `<span class="bar-label-num" style="bottom: 4px;">${tank.current}</span>` : '';
+        elSpc.innerHTML = tank.space > 0 ? `<span class="bar-label-num" style="top: 4px; color:#1e293b;">${tank.space}</span>` : '';
+      }
+    }
+  </script>
+</body>
+</html>
