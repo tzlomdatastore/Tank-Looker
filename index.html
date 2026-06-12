@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="icon.png">
   <link rel="apple-touch-icon" href="icon.png">
   
-  <title>ဆီကန် ပမာဏ - V1.5</title>
+  <title>ဆီကန် - V2.0</title>
   <style>
     * { box-sizing: border-box; font-family: sans-serif; }
     body { background-color: #e2e8f0; padding: 12px; margin: 0; color: #1e293b; user-select: none; }
@@ -26,49 +26,57 @@
       min-height: 92vh;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
     
     .app-workspace { flex: 1; }
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .title { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: 0.5px; }
+    .title-box { display: flex; align-items: center; gap: 8px; }
+    .title { font-size: 24px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: 0.5px; }
     
-    .date-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 10px; text-align: right; }
-    .date-box strong { font-size: 11px; color: #334155; font-family: monospace; }
+    .btn-setting { 
+      background: #f1f5f9; border: 1px solid #cbd5e1; font-size: 20px; 
+      cursor: pointer; padding: 6px 10px; border-radius: 10px; transition: 0.2s;
+    }
+    .btn-setting:active { background: #cbd5e1; }
+
+    .date-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 10px; text-align: right; }
+    .date-box strong { font-size: 13px; color: #334155; font-family: monospace; font-weight: bold; }
     
     .chart-container { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 6px; border-radius: 16px; margin-bottom: 14px; }
     .chart-box { display: flex; justify-content: space-around; align-items: flex-end; height: 130px; padding-bottom: 4px; border-bottom: 2px solid #cbd5e1; }
-    .bar-group { display: flex; flex-direction: column; align-items: center; width: 11%; height: 100%; justify-content: flex-end; position: relative; }
+    .bar-group { display: flex; flex-direction: column; align-items: center; width: 15%; height: 100%; justify-content: flex-end; position: relative; }
     
     .bar-stack { width: 100%; display: flex; flex-direction: column-reverse; border-radius: 20px; overflow: hidden; height: 100%; justify-content: flex-start; background: #cbd5e1; }
-    .bar-current { background-color: #10b981; width: 100%; transition: height 0.2s ease; position: relative; border-radius: 0 0 20px 20px; }
+    .bar-current { width: 100%; transition: height 0.2s ease; position: relative; border-radius: 0 0 20px 20px; }
     .bar-space { background-color: #94a3b8; width: 100%; transition: height 0.2s ease; position: relative; border-radius: 20px 20px 0 0; }
     
-    .bar-label-num { position: absolute; left: 50%; transform: translateX(-50%); font-size: 8px; font-weight: bold; color: white; z-index: 5; pointer-events: none; }
-    .chart-label-x { font-size: 11px; font-weight: bold; color: #334155; margin-top: 4px; text-align: center; }
+    .bar-label-num { position: absolute; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 900; color: white; z-index: 5; pointer-events: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.6); }
+    .chart-label-x { font-size: 13px; font-weight: bold; color: #334155; margin-top: 4px; text-align: center; }
     
-    .chart-legends { display: flex; justify-content: center; gap: 14px; margin-bottom: 8px; font-size: 11px; font-weight: 600; }
+    .chart-legends { display: flex; justify-content: center; gap: 14px; margin-bottom: 8px; font-size: 12px; font-weight: 600; }
     .legend-item { display: flex; align-items: center; gap: 4px; color: #475569; }
     .legend-color { width: 10px; height: 10px; border-radius: 3px; }
 
     .table-wrapper { border: 1px solid #cbd5e1; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 15px; }
     
     th { 
       background: linear-gradient(135deg, #64748b, #475569); 
       border-bottom: 1px solid #cbd5e1; 
-      padding: 8px 2px; 
-      font-size: 11px; 
+      padding: 10px 2px; 
+      font-size: 13px; 
       font-weight: bold; 
       color: #ffffff; 
     }
-    th span { font-size: 9px; font-weight: normal; color: #e2e8f0; }
-    td { padding: 2px; border-bottom: 1px solid #e2e8f0; font-weight: 600; }
+    th span { font-size: 10px; font-weight: normal; color: #e2e8f0; }
+    td { padding: 4px 2px; border-bottom: 1px solid #e2e8f0; font-weight: bold; }
     tr:last-child td { border-bottom: none; }
     
-    .bg-name { font-weight: bold; color: #0f172a; border-right: 1px solid #cbd5e1; background: #f1f5f9; }
-    .bg-space { background: #f8fafc; color: #475569; border-right: 1px solid #cbd5e1; font-weight: bold; }
+    .bg-name { font-size: 14px; font-weight: 800; color: #0f172a; border-right: 1px solid #cbd5e1; background: #f1f5f9; }
+    .bg-space { background: #f8fafc; color: #e11d48; border-right: 1px solid #cbd5e1; font-weight: 800; font-size: 15px; }
     
-    .table-input { width: 100%; border: none; background: transparent; text-align: center; font-size: 13px; font-weight: 700; padding: 6px 2px; border-radius: 6px; color: #0f172a; }
+    .table-input { width: 100%; border: none; background: transparent; text-align: center; font-size: 16px; font-weight: 800; padding: 8px 2px; border-radius: 6px; color: #0f172a; }
     .table-input:focus { background: #e2e8f0; outline: none; }
     .td-current { border-right: 1px solid #cbd5e1; background-color: #f8fafc; }
     
@@ -80,15 +88,35 @@
       padding-bottom: 10px;
     }
     .footer-brand {
-      font-size: 24px;
-      font-weight: 900;
+      font-size: 10px;
+      font-weight: 800;
       color: #94a3b8;
-      letter-spacing: 2px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
-      opacity: 0.6;
-      font-family: 'Arial Black', sans-serif;
-      text-shadow: 1px 1px 0px #fff;
+      opacity: 0.8;
+      font-family: sans-serif;
+      text-align: center;
+      line-height: 1.5;
     }
+
+    /* Setting Page Overlay */
+    .setting-page {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: #ffffff; border-radius: 24px; padding: 16px;
+      display: none; flex-direction: column; z-index: 100;
+      overflow-y: auto;
+    }
+    .setting-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;}
+    .setting-title { font-size: 18px; font-weight: bold; color: #0f172a; margin: 0; }
+    .btn-close { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;}
+    
+    .setting-row { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; background: #f8fafc; padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0; }
+    .setting-row label { font-size: 13px; font-weight: bold; min-width: 45px; }
+    .setting-input { width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: bold; }
+    .setting-color { width: 45px; height: 32px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0; cursor: pointer; }
+    
+    .btn-save { background: #10b981; color: white; border: none; width: 100%; padding: 12px; border-radius: 12px; font-size: 15px; font-weight: bold; margin-top: auto; cursor: pointer; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2); }
+    .btn-save:active { background: #059669; }
   </style>
 </head>
 <body>
@@ -97,7 +125,10 @@
     <div class="app-workspace">
       
       <div class="header">
-        <h1 class="title">ဆီကန် ပမာဏ</h1>
+        <div class="title-box">
+          <h1 class="title">ဆီကန်</h1>
+          <button class="btn-setting" onclick="openSettings()">⚙️</button>
+        </div>
         <div class="date-box">
           <strong id="currentDateTime">--/--/---- , --:-- --</strong>
         </div>
@@ -116,7 +147,7 @@
           <thead>
             <tr>
               <th style="border-right: 1px solid #cbd5e1; width: 75px;"><br><span>ဂါလံ</span></th>
-              <th style="border-right: 1px solid #cbd5e1;">လက်ရှိဆီ<br><span>ဂါလံ</span></th>
+              <th style="border-right: 1px solid #cbd5e1;">&nbsp;လက်ရှိဆီ&nbsp;<br><span>ဂါလံ</span></th>
               <th style="border-right: 1px solid #cbd5e1;">နေရာလွတ်<br><span>ဂါလံ</span></th>
               <th>အပြင်<br><span>ပေပါ</span></th>
             </tr>
@@ -128,28 +159,60 @@
     </div>
 
     <div class="keyboard-space">
-      <div class="footer-brand">TZLOM & Gemini</div>
+      <div class="footer-brand">
+        SUPPORT BY GITHUB, POWER BY GEMINI,<br>IDEA BY TZLOM
+      </div>
     </div>
+
+    <div class="setting-page" id="settingPage">
+      <div class="setting-header">
+        <h2 class="setting-title">⚙️ ကန်ပြင်ဆင်ချက်များ</h2>
+        <button class="btn-close" onclick="closeSettings()">ပိတ်မည်</button>
+      </div>
+      <div id="settingList"></div>
+      <button class="btn-save" onclick="saveSettings()">⚙️ ပြင်ဆင်ချက်များ သိမ်းဆည်းမည်</button>
+    </div>
+
   </div>
 
   <script>
-    // Service Worker မှတ်ပုံတင်ခြင်း (App အဖြစ် အလုပ်လုပ်ရန် အဓိကချက်)
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('Service Worker Registered'));
     }
 
-    const tanks = [
-      { id: 1, name: '95', capacity: 900, current: 400, space: 500, outInch: 0 },
-      { id: 2, name: '92', capacity: 900, current: 230, space: 670, outInch: 0 },
-      { id: 3, name: '92', capacity: 900, current: 440, space: 460, outInch: 0 },
-      { id: 4, name: 'PD', capacity: 3300, current: 3300, space: 0, outInch: 26 },
-      { id: 5, name: 'D', capacity: 1650, current: 1450, space: 200, outInch: 48 }
+    // Default Tanks Configuration
+    const defaultTanks = [
+      { id: 1, name: '95', capacity: 900, current: 0, space: 900, outInch: 0, color: '#10b981' },
+      { id: 2, name: '92', capacity: 900, current: 0, space: 900, outInch: 0, color: '#10b981' },
+      { id: 3, name: '92', capacity: 900, current: 0, space: 900, outInch: 0, color: '#10b981' },
+      { id: 4, name: 'PD', capacity: 3300, current: 0, space: 3300, outInch: 0, color: '#0ea5e9' },
+      { id: 5, name: 'D', capacity: 1650, current: 0, space: 1650, outInch: 0, color: '#f59e0b' }
     ];
+
+    let tanks = [];
+
+    // Load setup data from LocalStorage or default
+    function loadTanksData() {
+      const stored = localStorage.getItem('tank_config_v2');
+      if (stored) {
+        const savedTanks = JSON.parse(stored);
+        // Reset current values to 0 on fresh app open as requested
+        tanks = savedTanks.map(t => ({
+          ...t,
+          current: 0,
+          space: t.capacity,
+          outInch: 0
+        }));
+      } else {
+        tanks = JSON.parse(JSON.stringify(defaultTanks));
+      }
+    }
 
     window.onload = function() {
       updateDateTime();
       setInterval(updateDateTime, 60000); 
+      loadTanksData();
       buildApp();
     };
 
@@ -163,7 +226,7 @@
       const ampm = hours >= 12 ? 'pm' : 'am';
       hours = hours % 12 || 12; 
       minutes = minutes < 10 ? '0'+minutes : minutes;
-      document.getElementById("currentDateTime").innerText = `${day}-${month}-${year}  ,  ${hours}:${minutes} ${ampm}`;
+      document.getElementById("currentDateTime").innerText = `${day}-${month}-${year} , ${hours}:${minutes} ${ampm}`;
     }
 
     function buildApp() {
@@ -189,7 +252,7 @@
         barGroup.className = "bar-group";
         barGroup.innerHTML = `
           <div class="bar-stack">
-            <div class="bar-current" id="b-cur-${index}"></div>
+            <div class="bar-current" id="b-cur-${index}" style="background-color: ${tank.color || '#10b981'}"></div>
             <div class="bar-space" id="b-spc-${index}"></div>
           </div>
           <div class="chart-label-x">${tank.name}</div>
@@ -226,6 +289,48 @@
         elCur.innerHTML = tank.current > 0 ? `<span class="bar-label-num" style="bottom: 4px;">${tank.current}</span>` : '';
         elSpc.innerHTML = tank.space > 0 ? `<span class="bar-label-num" style="top: 4px; color:#1e293b;">${tank.space}</span>` : '';
       }
+    }
+
+    // Setting Page Controls
+    function openSettings() {
+      const listContainer = document.getElementById("settingList");
+      listContainer.innerHTML = "";
+
+      tanks.forEach((tank, index) => {
+        const row = document.createElement("div");
+        row.className = "setting-row";
+        row.innerHTML = `
+          <label>ကန် (${index+1})</label>
+          <input type="text" id="set-name-${index}" value="${tank.name}" class="setting-input" placeholder="နာမည်" style="width:70px;">
+          <input type="number" id="set-cap-${index}" value="${tank.capacity}" class="setting-input" placeholder="ဆံ့ပမာဏ">
+          <input type="color" id="set-clr-${index}" value="${tank.color || '#10b981'}" class="setting-color">
+        `;
+        listContainer.appendChild(row);
+      });
+
+      document.getElementById("settingPage").style.display = "flex";
+    }
+
+    function closeSettings() {
+      document.getElementById("settingPage").style.display = "none";
+    }
+
+    function saveSettings() {
+      tanks.forEach((tank, index) => {
+        const nameInput = document.getElementById(`set-name-${index}`).value;
+        const capInput = Number(document.getElementById(`set-cap-${index}`).value) || 0;
+        const colorInput = document.getElementById(`set-clr-${index}`).value;
+
+        tank.name = nameInput;
+        tank.capacity = capInput;
+        tank.color = colorInput;
+        tank.space = capInput - tank.current; 
+        if(tank.space < 0) tank.space = 0;
+      });
+
+      localStorage.setItem('tank_config_v2', JSON.stringify(tanks));
+      buildApp();
+      closeSettings();
     }
   </script>
 </body>
