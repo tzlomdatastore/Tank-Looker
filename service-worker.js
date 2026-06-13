@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fuel-tank-v2.0'; // Version ကို v2.0 လို့ ပြောင်းလိုက်ပါတယ်
+const CACHE_NAME = 'fuel-tank-v2.1'; // Version ကို v2.1 လို့ တိုးလိုက်ပါတယ်
 const ASSETS = [
   'index.html',
   'manifest.json',
@@ -11,7 +11,7 @@ self.addEventListener('install', (e) => {
       return cache.addAll(ASSETS);
     })
   );
-  self.skipWaiting(); // ကုဒ်အသစ်ကို ချက်ချင်း အသက်ဝင်စေဖို့
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
@@ -20,7 +20,7 @@ self.addEventListener('activate', (e) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
-            return caches.delete(key); // ဗားရှင်းအဟောင်းက အမှိုက်တွေကို ဖျက်ပစ်ပါတယ်
+            return caches.delete(key);
           }
         })
       );
